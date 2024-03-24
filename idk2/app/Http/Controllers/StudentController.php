@@ -2,31 +2,45 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Student;
+use App\Models\student;
 use Illuminate\Http\Request;
 
 class StudentController extends Controller
 {
-    public function affiche() {
-        $groups = Student::select('groupe')->distinct()->pluck('groupe');
+    //
+    public function affiche()
+    {
+        $groups = student::select('Groupe')->distinct()->pluck('Groupe');
         $students = collect();
+        
         return view('Ajouter', compact('students', 'groups'));
     }
-    
-    public function search(Request $request) {
+
+    //search
+    public function search(Request $request)
+    {
         $searchQuery = $request->input('search');
-        $groups = Student::where('filiere', 'like', '%' . $searchQuery . '%')
+        
+        $groups = Student::where('Filliere', 'like', '%' . $searchQuery . '%')
                         ->distinct()
-                        ->pluck('groupe');
+                        ->pluck('Groupe');
+        
         $students = collect(); // No students until a group is selected
+        
         return view('Ajouter', compact('groups', 'students'))->with('selectedFiliere', $searchQuery);
     }
-    
-    public function filterByGroup(Request $request) {
+
+
+    public function filterByGroup(Request $request)
+    {
         $groupId = $request->input('group');
-        $groups = Student::select('groupe')->distinct()->pluck('groupe');
-        $students = Student::where('groupe', $groupId)->get();
-        return view('Ajouter', compact('groups', 'students'));
+        
+        $groups = Student::select('Groupe')->distinct()->pluck('Groupe');
+        
+        $students = Student::where('Groupe', $groupId)->orderBy('Nom', 'asc')->get();
+        
+        return view('Ajouter', compact('groups', 'students' , 'groupId'));
+        
     }
 }
 

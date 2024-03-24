@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 </head>
 <style>
@@ -19,35 +18,34 @@
 <body>
     @extends('layouts.Navbar')
     @section('contenu')
-    <div class="search-container">
-        <form action="/search" method="GET">
-            <div class="input-group">
-                <div class="form-outline" data-mdb-input-init>
-                    <input id="search-input" type="search" name="search" class="form-control" placeholder="search filiere" />
-                </div>
-                <button id="search-button" type="submit" class="btn btn-primary">
-                    <i class="fas fa-search"></i>
-                </button>
+    <div class="search-container d-flex align-items-center">
+        <form action="/search" method="GET" class="d-flex">
+            <div class="form-outline" data-mdb-input-init>
+                <input id="search-input" type="search" name="search" class="form-control" placeholder="filtrer les groupes" />
             </div>
+            <button id="search-button" type="submit" class="btn btn-primary ml-2">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
+        <form id="group-select-form" action="{{ route('filterByGroup') }}" method="GET" class="ml-2">
+            <select name="group" id="group-select" class="form-control">
+                <option value="" hidden>**select un groupe**</option>
+                @foreach($groups as $group)
+                    <option value="{{ $group }}">{{ $group }}</option>
+                @endforeach
+            </select>
         </form>
     </div>
-    <br>
-    <form id="group-select-form" action="{{ route('filterByGroup') }}" method="GET">
-        <select name="group" id="group-select">
-            <option value="" hidden>**select un groupe**</option>
-            @foreach($groups as $group)
-                <option value="{{ $group }}">{{ $group }}</option>
-            @endforeach
-        </select>
     
-    </form>
     <br><br>
     <center>
-        <form action="/absence-student" method="post" id="attendanceForm">
-            <input type="date" name="select_date" placeholder="saiser la date d'absence"> <br>
+        <form  action="/absence-student" method="post" id="attendanceForm">
+            <input type="date" name="select_date" id="select_date" > <br><br><br>
             @csrf
             @if($students->isNotEmpty())
-            <table class="table table-striped table-dark">
+            <h4> <b>groupe : </b>{{$groupId}} &ensp; &ensp;&ensp; <b> Nombre Etudiants : </b> {{$students->count()}}</h4>
+
+            <table class="table table-striped ">
                 <thead>
                     <tr>
                         <th scope="col">Select</th>
@@ -61,13 +59,14 @@
                 </thead>
                 <tbody>
                     @foreach($students as $stud)
+
                         <tr>
                             <td>
                                 <input type="checkbox" name="attendance[{{ $stud->id }}][absent]" value="1" class="absent-checkbox">
                             </td>
-                            <td><a href="/detail-student/{{ $stud->cef }}" style="text-decoration: none">{{ $stud->cef }}</a></td>
-                            <td>{{ $stud->name }}</td>
-                            <td>{{ $stud->prenom }}</td>
+                            <td><a href="/detail-student/{{ $stud->CEF }}" style="text-decoration: none">{{ $stud->CEF }}</a></td>
+                            <td>{{ $stud->Nom }}</td>
+                            <td>{{ $stud->Prenom }}</td>
                             <td>
                                 <div class="d-flex align-items-center">
                                     <select name="attendance[{{ $stud->id }}][hour]" class="form-control hours-select me-2" disabled>
@@ -90,7 +89,7 @@
                                 </div>
                             </td>
                             <td>
-                                <select name="attendance[{{ $stud->id }}][absent_retard]" class="form-control absent_retard" disabled>
+                                <select name="attendance[{{ $stud->id }}][absent_retard]"  class="form-control absent_retard" disabled>
                                     <option value="absent" {{ (old('attendance.'.$stud->id.'.absent_retard') == 'absent') ? 'selected' : '' }}>absent</option>
                                     <option value="retard" {{ (old('attendance.'.$stud->id.'.absent_retard') == 'retard') ? 'selected' : '' }}>retard</option>
                                 </select>
@@ -118,6 +117,7 @@
         </form>
     </center>
     <br><br>
+    
     @endsection
     <script type="text/javascript">
     $('#group-select').change(function() {
@@ -159,7 +159,7 @@
             });
             });
 
-            
+            document.getElementById('select_date').valueAsDate = new Date()
             //search code 
             // $('#search').on('keyup',function(){
                 
@@ -190,3 +190,4 @@
     </script>
 </body>
 </html>
+

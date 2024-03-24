@@ -7,10 +7,6 @@
     <title>Document</title>
 </head>
 <body>
-    @extends('layouts.Navbar')
-    @section('contenu')
-    hello world 
-
-    @endsection
+    fzpeonjgpoez
 </body>
 </html>

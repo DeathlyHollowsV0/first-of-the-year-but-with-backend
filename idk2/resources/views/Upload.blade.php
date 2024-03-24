@@ -9,8 +9,13 @@
 <body>
     @extends('layouts.Navbar')
     @section('contenu')
-    hello world 
-
+    <form method="POST" enctype="multipart/form-data">
+        @csrf
+        <label for="csv_file"> transaction file</label>
+        <input type="file" name="csv_file" id="csv_file"><br><br>
+        <button type="submit">Upload</button>
+    </form>
     @endsection
+    
 </body>
 </html>

@@ -9,10 +9,7 @@ class absence extends Model
 {
     use HasFactory;
     protected $fillable = [
-        "cef",
-        "name",
-        "prenom",
-        "absent",
+        "student_id",
         "absent_retard",
         "filiere",
         "groupe",
@@ -21,4 +18,8 @@ class absence extends Model
         "to_hour",
         "justifier"
     ];
+    public function student()
+{
+    return $this->belongsTo(student::class, 'student_id');
+}
 }

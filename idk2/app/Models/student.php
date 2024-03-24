@@ -9,10 +9,15 @@ class student extends Model
 {
     use HasFactory;
     protected $fillable = [
-        "cef",
-        "name",
-        "prenom",
-        "filiere",
-        "groupe",
+        "CEF",
+        "Nom",
+        "Prenom",
+        "Filliere",
+        "Groupe",
     ];
+    public function absences()
+{
+    return $this->hasMany(absence::class, 'student_id');
+}
+    protected $guarded = [];
 }
