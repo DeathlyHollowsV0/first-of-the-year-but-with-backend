@@ -46,6 +46,17 @@ class AbsenceController extends Controller
     
         return view('Check', compact('groups', 'absences'));
     }
+    public function detail_student($cef)
+    {
+        $absences = Absence::join('students', 'students.id', '=', 'absences.student_id')
+                            ->select('absences.*', 'students.Nom', 'students.Prenom', 'students.Filliere', 'students.Groupe')
+                            ->where('students.CEF', $cef)
+                            ->get();
+        
+        $absencesCount = $absences->count();
+        
+        return view('DetaileStagaire', compact('absences', 'absencesCount'));
+    }
     
 
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AbsenceController;
+use App\Http\Controllers\ImprimerController;
 use App\Http\Controllers\StudentController;
 use App\Models\student;
 use Illuminate\Support\Facades\Route;
@@ -23,6 +24,11 @@ Route::get('/filterByGroup', [StudentController::class, 'filterByGroup'])->name(
 //inserer 
 Route::post('/absence-student',[AbsenceController::class,"absence_student"]);
 
+//imprimer
+Route::get('/Imprimer', [ImprimerController::class, 'imprimer']);
+
+//detail 
+Route::get('/detail-student/{cef}', [AbsenceController::class, 'detail_student']);
 
 //csv
 Route::post('/upload', function(){
