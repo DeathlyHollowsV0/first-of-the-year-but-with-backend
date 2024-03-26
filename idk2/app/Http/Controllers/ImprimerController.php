@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\absence;
 use App\Models\student;
 use Illuminate\Http\Request;
-use PHPUnit\Event\TestSuite\Sorted;
+
 
 class ImprimerController extends Controller
 {

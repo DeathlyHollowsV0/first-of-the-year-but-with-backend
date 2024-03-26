@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AbsenceController;
+use App\Http\Controllers\graph;
 use App\Http\Controllers\ImprimerController;
 use App\Http\Controllers\StudentController;
 use App\Models\student;
@@ -39,18 +40,21 @@ Route::post('/upload', function(){
 
     foreach($csv as $record){
         student::create([
-            'CEF' => $record['CEF'], // Matches model's $fillable
-            'Nom' => $record['Nom'], // Matches model's $fillable
-            'Prenom' => $record['Prenom'], // Matches model's $fillable
-            'Filliere' => $record['Filliere'], // Matches model's $fillable
-            'Groupe' => $record['Groupe'], // Matches model's $fillable
+            'CEF' => $record['CEF'],
+            'Nom' => $record['Nom'],
+            'Prenom' => $record['Prenom'],
+            'Filliere' => $record['Filliere'],
+            'Groupe' => $record['Groupe'],
         ]);
 
         
-        // Removed the dd('Record imported!'); to allow all records to be processed
+       
     }
     return back()->with('success', 'CSV data has been imported successfully.');
 });
+//graph
+Route::get('/graph', [graph::class, 'graph'])->name("graph");
+
 
 
 

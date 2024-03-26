@@ -10,7 +10,7 @@ class StudentController extends Controller
     //
     public function affiche()
     {
-        $groups = student::select('Groupe')->distinct()->pluck('Groupe');
+        $groups = student::select('Groupe')->distinct()->orderBy('Groupe')->pluck('Groupe');
         $students = collect();
         
         return view('Ajouter', compact('students', 'groups'));
@@ -25,7 +25,7 @@ class StudentController extends Controller
                         ->distinct()
                         ->pluck('Groupe');
         
-        $students = collect(); // No students until a group is selected
+        $students = collect(); 
         
         return view('Ajouter', compact('groups', 'students'))->with('selectedFiliere', $searchQuery);
     }

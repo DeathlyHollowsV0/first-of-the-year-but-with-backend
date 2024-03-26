@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="bootstrap.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="bootstrap.bundle.js"></script>
     <title>Document</title>
     <style>
@@ -86,11 +87,15 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('check-absence') }}">Check <i class="bi bi-eye-fill"></i></a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/upload">Upload <i class="bi bi-upload"></i></a>
-                    </li>
+                    
                     <li class="nav-item">
                         <a class="nav-link" href="/Imprimer">Imprimer <i class="bi bi-printer-fill"></i></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/graph">Graph <i class="bi bi-graph-up"></i></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/upload">Upload <i class="bi bi-upload"></i></a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">

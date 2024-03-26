@@ -45,7 +45,11 @@
                         @endforeach
                     </select>
 
-                    <input type="submit" value="Filter"> <input type="button" value="Print" onclick="printContent()">
+                    <input type="submit" value="Filter">
+                    <button type="button" onclick="printContent()">
+                        <i class="bi bi-printer-fill"></i> Print
+                    </button>
+
                 </form>
                 <br>
 

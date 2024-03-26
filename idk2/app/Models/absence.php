@@ -22,4 +22,5 @@ class absence extends Model
 {
     return $this->belongsTo(student::class, 'student_id');
 }
+
 }
