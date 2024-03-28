@@ -53,7 +53,7 @@
                 </form>
                 <br>
 
-                @foreach ($absences as $group => $groupAbsences)
+                {{-- @foreach ($absences as $group => $groupAbsences)
                     @php
                         $groupAbsences = $groupAbsences->groupBy('student.Nom');
 
@@ -103,7 +103,116 @@
                             @endforeach
                         </table>
                     </div>
+                @endforeach --}}
+                @foreach ($absences as $group => $groupAbsences)
+                    @php
+                        $groupAbsences = $groupAbsences->groupBy('student.Nom');
+                    @endphp
+                    <div id="print">
+                        {{-- @foreach ($groupAbsences as $studentName => $studentAbsences)
+            <table class="table">
+                <style>
+                    table {
+                        width: 100%;
+                        border-collapse: collapse;
+                    }
+
+                    th,
+                    td {
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        border: 1px solid black;
+                        padding: 5px;
+                    }
+                </style>
+
+                <tr>
+                    <th>Groupe</th>
+                    <th>Nom</th>
+                    <th>Prenom</th>
+                    <th>Date</th>
+                    <th>Absent/Retard</th>
+                    <th>From Hour</th>
+                    <th>To Hour</th>
+                    <th>Justifier</th>
+                </tr>
+
+                @foreach ($studentAbsences as $absence)
+                    <tr>
+                        <td>{{ $absence->student->Groupe }}</td>
+                        <td>{{ $absence->student->Nom }}</td>
+                        <td>{{ $absence->student->Prenom }}</td>
+                        <td>{{ $absence->select_date }}</td>
+                        <td>{{ $absence->absent_retard }}</td>
+                        <td>{{ $absence->from_hour }}</td>
+                        <td>{{ $absence->to_hour }}</td>
+                        <td>{{ $absence->justifier }}</td>
+                    </tr>
                 @endforeach
+            </table>
+        @endforeach --}}
+                        <table class="table">
+                            <style>
+                                table {
+                                    width: 100%;
+                                    border-collapse: collapse;
+                                }
+
+                                th,
+                                td {
+                                    white-space: nowrap;
+                                    overflow: hidden;
+                                    text-overflow: ellipsis;
+                                    border: 1px solid black;
+                                    padding: 5px;
+                                    text-align: center;
+                                    vertical-align: middle;
+                                }
+                            </style>
+
+                            <tr>
+                                <th>Groupe</th>
+                                <th>Nom</th>
+                                <th>Prenom</th>
+                                <th>Date</th>
+                                <th>Absent/Retard</th>
+                                <th>From Hour</th>
+                                <th>To Hour</th>
+                                <th>Justifier</th>
+                            </tr>
+
+                            @foreach ($absences as $group => $groupAbsences)
+                                @php
+                                    $groupAbsences = $groupAbsences->groupBy('student.Nom');
+                                @endphp
+
+                                @foreach ($groupAbsences as $studentName => $studentAbsences)
+                                    @php
+                                        $rowspan = count($studentAbsences);
+                                    @endphp
+
+                                    @foreach ($studentAbsences as $index => $absence)
+                                        <tr>
+                                            @if ($index === 0)
+                                                <td rowspan="{{ $rowspan }}">{{ $absence->student->Groupe }}</td>
+                                                <td rowspan="{{ $rowspan }}">{{ $absence->student->Nom }}</td>
+                                                <td rowspan="{{ $rowspan }}">{{ $absence->student->Prenom }}</td>
+                                            @endif
+                                            <td>{{ $absence->select_date }}</td>
+                                            <td>{{ $absence->absent_retard }}</td>
+                                            <td>{{ $absence->from_hour }}</td>
+                                            <td>{{ $absence->to_hour }}</td>
+                                            <td>{{ $absence->justifier }}</td>
+                                        </tr>
+                                    @endforeach
+                                @endforeach
+                            @endforeach
+                        </table>
+
+                    </div>
+                @endforeach
+
             </center>
         @endsection
 

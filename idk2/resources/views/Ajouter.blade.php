@@ -20,6 +20,11 @@
 <body>
     @extends('layouts.Navbar')
     @section('contenu')
+ @if (session('warning'))
+        <div class="alert alert-warning">
+            {{ session('warning') }}
+        </div>
+    @endif
         <div class="search-container d-flex justify-content-center">
             <form action="/search" method="GET" class="d-flex">
                 <div class="form-outline" data-mdb-input-init>
@@ -140,6 +145,17 @@
         <br><br>
 
     @endsection
+      @if(session('success'))
+        <div class="alert alert-success">
+            {{ session('success') }}
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="alert alert-danger">
+            {{ session('error') }}
+        </div>
+    @endif
     <script type="text/javascript">
         $('#group-select').change(function() {
             var selectedGroup = $(this).val();

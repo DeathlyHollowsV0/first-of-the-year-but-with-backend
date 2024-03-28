@@ -10,12 +10,12 @@
     <script src="bootstrap.bundle.js"></script>
     <title>Document</title>
     <style>
-        /* Reducing the padding inside the navbar to decrease its height */
+       
         .navbar {
-            padding: 0.5rem 1rem; /* Adjust the vertical padding to reduce height */
+            padding: 0.5rem 1rem;
         }
 
-        /* Adjusting navbar links */
+      
         .navbar-nav {
             flex-direction: row;
             width: 100%;
@@ -23,34 +23,34 @@
         }
 
         .navbar-nav .dropdown {
-            margin-left: auto; /* Pushes the dropdown to the right */
+            margin-left: auto; 
             margin-right: 5%;
         }
 
         .nav-item:not(.dropdown) {
-            margin-right: auto; /* Spacing between nav items */
+            margin-right: auto; 
             margin-left: auto;
         }
 
-        /* Styling for nav links hover effect */
+      
         .nav-link {
-            color: #000; /* Default color */
-            transition: color 0.3s; /* Smooth transition for color change */
+            color: #000; 
+            transition: color 0.3s; 
         }
 
         .nav-link:hover, .nav-link:focus {
-            color: #007bff; /* Color change on hover */
+            color: #007bff; 
         }
 
-        /* Logo adjustments */
+    
         .navbar-logo {
-            height: 60px; /* Adjusted for smaller navbar */
-            width: 120px; /* Keeps the aspect ratio */
+            height: 60px; 
+            width: 120px; 
             margin-left: -18%;
         }
 
 
-        /* Custom bottom border */
+  
         nav::after {
             content: '';
             display: block;
@@ -64,13 +64,13 @@
     </style>
 </head>
 <body>
-    <!-- Navbar -->
+  
     <nav id="cc" class="navbar navbar-expand-lg navbar-light bg-white sticky-top">
         <div class="container">
-            <!-- Brand/logo -->
+           
             <p class="navbar-brand">
                 
-                <img src="/images/ofppt_logo-removebg-preview.png" alt="logo" class="navbar-logo">             <!-- Toggler/collapsible Button -->
+                <img src="/images/ofppt_logo-removebg-preview.png" alt="logo" class="navbar-logo">             
             </p>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedAbsence" aria-controls="navbarSupportedAbsence" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
