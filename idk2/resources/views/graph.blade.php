@@ -5,12 +5,12 @@
         <input type="date" name="start_date">
         <input type="date" name="end_date">
         <select name="groupe">
-            <option value="">Select Group</option>
+            <option value="">Selectioner un Groupe</option>
             @foreach ($allGroups as $group)
                 <option value="{{ $group->Groupe }}">{{ $group->Groupe }}</option>
             @endforeach
         </select>
-        <button type="submit">Submit</button>
+        <button class="btn btn-primary" type="submit">Chercher</button>
     </form>
 
     <br>

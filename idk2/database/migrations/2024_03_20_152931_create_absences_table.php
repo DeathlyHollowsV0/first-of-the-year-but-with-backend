@@ -30,5 +30,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('absences');
+        // Schema::table('absences', function (Blueprint $table) {
+        //     $table->softDeletes(); // Ajoute la colonne deleted_at pour la suppression logique
+        // });
     }
 };

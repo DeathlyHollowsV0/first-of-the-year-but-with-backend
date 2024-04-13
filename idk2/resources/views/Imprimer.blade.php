@@ -22,16 +22,17 @@
 
     <body>
 
-
+        <?php if (Session::has('id')): ?>
+        
         @extends('layouts.Navbar')
         @section('contenu')
             <br>
             <center>
                 <form method="GET" action="/Imprimer">
-                    <label for="start_date">Start Date:</label>
+                    <label for="start_date">DE:</label>
                     <input type="date" id="start_date" name="start_date">
 
-                    <label for="end_date">End Date:</label>
+                    <label for="end_date">À:</label>
                     <input type="date" id="end_date" name="end_date">
 
 
@@ -45,113 +46,21 @@
                         @endforeach
                     </select>
 
-                    <input type="submit" value="Filter">
-                    <button type="button" onclick="printContent()">
-                        <i class="bi bi-printer-fill"></i> Print
+                    <input style="background-color: rgb(143, 215, 158)" type="submit" value="Filter">
+                    <button style="background-color: rgb(143, 215, 158)" type="button" onclick="printContent()">
+                        <i class="bi bi-printer-fill"></i> Imprimer
                     </button>
 
                 </form>
                 <br>
 
-                {{-- @foreach ($absences as $group => $groupAbsences)
-                    @php
-                        $groupAbsences = $groupAbsences->groupBy('student.Nom');
-
-                    @endphp
-                    <div id="print">
-                        <table class="table">
-                            <style>
-                                table {
-                                    width: 100%;
-                                    border-collapse: collapse;
-                                }
-
-                                th,
-                                td {
-                                    white-space: nowrap;
-                                    overflow: hidden;
-                                    text-overflow: ellipsis;
-                                    border: 1px solid black;
-                                    padding: 5px;
-                                }
-                            </style>
-
-                            <tr>
-                                <th>Groupe</th>
-                                <th>Nom</th>
-                                <th>Prenom</th>
-                                <th>Date</th>
-                                <th>Absent/Retard</th>
-                                <th>From Hour</th>
-                                <th>To Hour</th>
-                                <th>Justifier</th>
-                            </tr>
-
-                            @foreach ($groupAbsences as $studentName => $studentAbsences)
-                                @foreach ($studentAbsences as $absence)
-                                    <tr>
-                                        <td>{{ $absence->student->Groupe }}</td>
-                                        <td>{{ $absence->student->Nom }}</td>
-                                        <td>{{ $absence->student->Prenom }}</td>
-                                        <td>{{ $absence->select_date }}</td>
-                                        <td>{{ $absence->absent_retard }}</td>
-                                        <td>{{ $absence->from_hour }}</td>
-                                        <td>{{ $absence->to_hour }}</td>
-                                        <td>{{ $absence->justifier }}</td>
-                                    </tr>
-                                @endforeach
-                            @endforeach
-                        </table>
-                    </div>
-                @endforeach --}}
+                
                 @foreach ($absences as $group => $groupAbsences)
                     @php
                         $groupAbsences = $groupAbsences->groupBy('student.Nom');
                     @endphp
                     <div id="print">
-                        {{-- @foreach ($groupAbsences as $studentName => $studentAbsences)
-            <table class="table">
-                <style>
-                    table {
-                        width: 100%;
-                        border-collapse: collapse;
-                    }
-
-                    th,
-                    td {
-                        white-space: nowrap;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        border: 1px solid black;
-                        padding: 5px;
-                    }
-                </style>
-
-                <tr>
-                    <th>Groupe</th>
-                    <th>Nom</th>
-                    <th>Prenom</th>
-                    <th>Date</th>
-                    <th>Absent/Retard</th>
-                    <th>From Hour</th>
-                    <th>To Hour</th>
-                    <th>Justifier</th>
-                </tr>
-
-                @foreach ($studentAbsences as $absence)
-                    <tr>
-                        <td>{{ $absence->student->Groupe }}</td>
-                        <td>{{ $absence->student->Nom }}</td>
-                        <td>{{ $absence->student->Prenom }}</td>
-                        <td>{{ $absence->select_date }}</td>
-                        <td>{{ $absence->absent_retard }}</td>
-                        <td>{{ $absence->from_hour }}</td>
-                        <td>{{ $absence->to_hour }}</td>
-                        <td>{{ $absence->justifier }}</td>
-                    </tr>
-                @endforeach
-            </table>
-        @endforeach --}}
+                        
                         <table class="table">
                             <style>
                                 table {
@@ -215,8 +124,9 @@
 
             </center>
         @endsection
-
-
+        <?php else: ?>
+            <center><h1 style="color: rgb(236, 103, 103);font-size: 28px; margin-top: 300px">PAGE EXPIRED</h1></center>
+        <?php endif; ?>
     </body>
 
     </html>

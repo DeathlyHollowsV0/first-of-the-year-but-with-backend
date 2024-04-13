@@ -5,64 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\absence;
 use App\Models\student;
 use Illuminate\Http\Request;
-
-// class AbsenceController extends Controller
-// {
-//     //
-//     public function absence_student(Request $request)
-//     {
-//         $request->validate([
-//             'attendance' => 'required|array',
-//         ]);
-    
-//         foreach ($request->input('attendance') as $studentId => $attendanceData) {
-         
-//             $student = student::findOrFail($studentId);
-    
-//             absence::create([
-//                 'student_id' => $student->id, 
-//                 'select_date' => $request->select_date,
-//                 'absent_retard' => $attendanceData['absent_retard'],
-//                 'from_hour' => $attendanceData['hour'],
-//                 'to_hour' => $attendanceData['to_hour'],
-//                 'justifier' => $attendanceData['justifier'] ?? "non justifier",
-//             ]);
-//         }
-    
-      
-//         return redirect('/ajouter')->with('success', 'Absence recorded successfully!');
-//     }
-//     public function import()
-//     {
-    
-//         $absences = Absence::with('student')->get();
-    
-        
-//         $groups = $absences->pluck('student.Groupe')->unique()->sort()->values();
-    
-//         return view('Check', compact('groups', 'absences'));
-//     }
-//     public function detail_student($cef)
-//     {
-//         $absences = Absence::join('students', 'students.id', '=', 'absences.student_id')
-//                             ->select('absences.*', 'students.Nom', 'students.Prenom', 'students.Filliere', 'students.Groupe')
-//                             ->where('students.CEF', $cef)
-//                             ->get();
-        
-//         $absencesCount = $absences->count();
-        
-//         return view('DetaileStagaire', compact('absences', 'absencesCount'));
-//     }
-    
-    
-
-// } 
+use Illuminate\Support\Facades\DB;
 
 
-
-
-
-use function Laravel\Prompts\alert;
 
 class AbsenceController extends Controller
 {
@@ -79,19 +24,7 @@ class AbsenceController extends Controller
         foreach ($request->input('attendance') as $studentId => $attendanceData) {
             $student = Student::findOrFail($studentId);
     
-            // Check for existing absence record for the student on the same day and hour
-            // $existingAbsence = Absence::where('student_id', $student->id)
-            //     ->where('select_date', $request->select_date)
-            //     ->where('from_hour', $attendanceData['hour'])
-            //     ->where('to_hour', $attendanceData['to_hour'])
-            //     ->first();
-    
-            // if ($existingAbsence) {
-            //     // Redirect back with an error message if a matching absence record is found
-            //     // return redirect()->back()->with('error', 'Duplicate absence record detected for the selected student, date, and hour. No new record has been created.');
-            //     continue;
-            //     // return redirect('/ajouter')->with('error','un enregistrement redoubler');
-            // }
+            
             $existingAbsence = Absence::where('student_id', $student->id)
             ->where('select_date', $request->select_date)
             ->where('from_hour', $attendanceData['hour'])
@@ -99,12 +32,10 @@ class AbsenceController extends Controller
             ->first();
 
         if ($existingAbsence) {
-            // Instead of redirecting, store the student's ID (or any identifier) and the date in the duplicates list
             $duplicateFound = true;            
             continue;
         }
     
-            // Create a new absence record if no duplicates were found
             Absence::create([
                 'student_id' => $student->id,
                 'select_date' => $request->select_date,
@@ -120,6 +51,31 @@ class AbsenceController extends Controller
             return redirect('/ajouter')->with('success', 'All absence records have been recorded successfully.');
         }
     }
+
+
+    //update function
+    public function updateAbsence(Request $request)
+    {
+        $request->validate([
+            'attendance' => 'required|array',
+        ]);
+        
+        foreach ($request->input('attendance') as $absenceId => $attendanceData) {
+            $absence = Absence::findOrFail($absenceId);
+            
+            if (isset($attendanceData['absent']) && $attendanceData['absent'] == '1') {
+                $absence->update([
+                    'absent_retard' => $attendanceData['absent_retard'],
+                    'from_hour' => $attendanceData['hour'],
+                    'to_hour' => $attendanceData['to_hour'],
+                    'justifier' => $attendanceData['justifier'],
+                ]);
+            }
+        }
+        
+        return back()->with('success', 'Les absences ont été mises à jour avec succès.');
+    }
+
     
 
     
@@ -134,61 +90,106 @@ class AbsenceController extends Controller
     
         return view('Check', compact('groups', 'absences'));
     }
-    public function detail_student($cef)
+    public function detail_student($CEF)
     {
         $absences = Absence::join('students', 'students.id', '=', 'absences.student_id')
                             ->select('absences.*', 'students.Nom', 'students.Prenom', 'students.Filliere', 'students.Groupe')
-                            ->where('students.CEF', $cef)
+                            ->where('students.CEF', $CEF)
+                            ->orderBy('absences.select_date', 'desc') // Tri par date croissante
                             ->get();
         
         $absencesCount = $absences->count();
+        $name = $absences->isNotEmpty() ? $absences->first()->Nom : 'Inconnu';
+        $pren = $absences->isNotEmpty() ? $absences->first()->Prenom : 'Inconnu';
         
-        return view('DetaileStagaire', compact('absences', 'absencesCount'));
-    }
-
-    public function search(Request $request) {
-        $searchQuery = $request->input('search');
-        $groups = absence::join('students', 'students.id', '=', 'absences.student_id')
-                                ->where('students.Filliere', 'like', '%' . $searchQuery . '%')
-                                ->distinct()
-                                ->pluck('students.Groupe');
-        $students = collect(); // No students until a group is selected
-        return view('Check', compact('groups', 'students'))->with('selectedFiliere', $searchQuery);
+        return view('DetaileStagaire', compact('absences', 'absencesCount','name','pren'));
     }
     
-    public function filterByGroup(Request $request)
+
+
+    // public function showAbsences(Request $request)
+    // {
+    //     $searchQuery = $request->input('search');
+    //     $terms = explode(' ', $searchQuery); // Séparer les termes de recherche
+    
+    //     $studentsWithAbsences = Student::with(['absences'])
+    //         ->when($searchQuery, function ($query) use ($terms) {
+    //             foreach ($terms as $term) {
+    //                 // Appliquer un filtre pour chaque terme de recherche
+    //                 $query->where(function ($query) use ($term) {
+    //                     $query->where('Nom', 'LIKE', "%{$term}%")
+    //                         ->orWhere('Prenom', 'LIKE', "%{$term}%")
+    //                         ->orWhere('Groupe', 'LIKE', "%{$term}%");
+    //                 });
+    //             }
+    //         })
+    //         ->get()
+    //         ->map(function ($student) {
+    //             $totalHoursAbsent = $student->absences->sum(function ($absence) {
+    //                 $from = \Carbon\Carbon::parse($absence->from_hour);
+    //                 $to = \Carbon\Carbon::parse($absence->to_hour);
+    //                 return $to->diffInHours($from);
+    //             });
+    
+    //             // Retourne les données nécessaires pour la vue
+    //             return [
+    //                 'CEF' => $student->CEF,
+    //                 'Nom' => $student->Nom,
+    //                 'Prenom' => $student->Prenom,
+    //                 'Groupe' => $student->Groupe,
+    //                 'TotalAbsences' => $student->absences->count(),
+    //                 'TotalHoursAbsent' => $totalHoursAbsent,
+    //             ];
+    //         });
+    
+    //     return view('Check', compact('studentsWithAbsences'));
+    // }
+
+
+
+    public function showAbsences(Request $request)
     {
-        $groupId = $request->input('group');
-        
-        $groups = Absence::select('groupe')->distinct()->pluck('groupe');
-        
-        $absences = Absence::join('students', 'students.id', '=', 'absences.student_id')
-                            ->select('absences.*', 'students.Nom', 'students.Prenom', 'students.Filliere', 'students.Groupe')
-                            ->where('students.Groupe', $groupId)
-                            ->get();
-        
-        return view('Check', compact('groups', 'absences'));
+        $searchQuery = $request->input('search');
+        $terms = explode(' ', $searchQuery); // Séparer les termes de recherche
+    
+        $studentsWithAbsences = DB::table('students')
+            ->leftJoin('absences', 'students.id', '=', 'absences.student_id')
+            ->select(
+                'students.CEF',
+                'students.Nom',
+                'students.Prenom',
+                'students.Groupe',
+                DB::raw("CONCAT(FLOOR(SUM(TIME_TO_SEC(TIMEDIFF(absences.to_hour, absences.from_hour))) / 3600), 'h',
+                        LPAD(FLOOR((SUM(TIME_TO_SEC(TIMEDIFF(absences.to_hour, absences.from_hour))) % 3600) / 60), 2, '0'), 'min') AS total_time_absent")
+            )
+            ->when($searchQuery, function ($query) use ($terms) {
+                foreach ($terms as $term) {
+                    $query->where(function ($query) use ($term) {
+                        $query->where('students.Nom', 'LIKE', "%{$term}%")
+                            ->orWhere('students.Prenom', 'LIKE', "%{$term}%")
+                            ->orWhere('students.Groupe', 'LIKE', "%{$term}%");
+                    });
+                }
+            })
+            ->groupBy('students.CEF', 'students.Nom', 'students.Prenom', 'students.Groupe')
+            ->get();
+    
+        return view('Check', compact('studentsWithAbsences'));
     }
-
-    public function showAbsencesWithLatestDate()
+    
+    public function delete($id)
     {
-        // Fetch students with their latest absence date
-        $studentsWithLatestAbsence = Student::with(['absences' => function($query) {
-            $query->latest('select_date');
-        }])->get();
-
-        // Transform the collection to include only the latest absence date for each student
-        $studentsWithLatestAbsence->each(function ($student) {
-            if ($student->absences->isNotEmpty()) {
-                $student->latest_absence_date = $student->absences->first()->select_date;
-            }
-        });
-
-        // Fetch distinct groups from students
-        $groups = Student::select('Groupe')->distinct()->pluck('Groupe');
-
-        return view('check', compact('studentsWithLatestAbsence', 'groups'));
+        $client = absence::find($id); 
+        
+            $client->delete();
+            return redirect()->back()->with('success', 'absence supprimé avec succès.');
+        
     }
+    
+    
+    
+
+
+
 }
-
 

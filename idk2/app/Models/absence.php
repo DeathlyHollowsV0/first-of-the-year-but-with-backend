@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class absence extends Model
 {
     use HasFactory;
+    
     protected $fillable = [
         "student_id",
         "absent_retard",
@@ -22,5 +23,4 @@ class absence extends Model
 {
     return $this->belongsTo(student::class, 'student_id');
 }
-
 }
