@@ -144,38 +144,125 @@ class AbsenceController extends Controller
     
     //     return view('Check', compact('studentsWithAbsences'));
     // }
+    public function importCheck(){
+        $groups = absence::select('Groupe')->distinct()->get()->sortBy('Groupe');
+
+        return view('Check', compact('groups'));
+    }
+
+
+
+    // public function showAbsences(Request $request)
+    // {
+    //     $searchQuery = $request->input('search');
+    //     $terms = explode(' ', $searchQuery); // Séparer les termes de recherche
+    
+    //     $studentsWithAbsences = DB::table('students')
+    //         ->join('absences', 'students.id', '=', 'absences.student_id') // Utilisez join au lieu de leftJoin pour ne sélectionner que les étudiants avec des absences
+    //         ->select(
+    //             'students.CEF',
+    //             'students.Nom',
+    //             'students.Prenom',
+    //             'students.Groupe',
+    //             DB::raw("CONCAT(FLOOR(SUM(TIME_TO_SEC(TIMEDIFF(absences.to_hour, absences.from_hour))) / 3600), 'h ',
+    //                     LPAD(FLOOR((SUM(TIME_TO_SEC(TIMEDIFF(absences.to_hour, absences.from_hour))) % 3600) / 60), 2, '0'), 'min') AS total_time_absent")
+    //         )
+    //         ->when($searchQuery, function ($query) use ($terms) {
+    //             foreach ($terms as $term) {
+    //                 $query->where(function ($query) use ($term) {
+    //                     $query->where('students.Nom', 'LIKE', "%{$term}%")
+    //                         ->orWhere('students.Prenom', 'LIKE', "%{$term}%")
+    //                         ->orWhere('students.Groupe', 'LIKE', "%{$term}%");
+    //                 });
+    //             }
+    //         })
+    //         ->groupBy('students.CEF', 'students.Nom', 'students.Prenom', 'students.Groupe')
+    //         ->get();
+    
+    //     return view('Check', compact('studentsWithAbsences'));
+    // }
 
 
 
     public function showAbsences(Request $request)
     {
+        $selectedGroup = $request->input('groupe');
         $searchQuery = $request->input('search');
-        $terms = explode(' ', $searchQuery); // Séparer les termes de recherche
-    
-        $studentsWithAbsences = DB::table('students')
-            ->leftJoin('absences', 'students.id', '=', 'absences.student_id')
-            ->select(
-                'students.CEF',
-                'students.Nom',
-                'students.Prenom',
-                'students.Groupe',
-                DB::raw("CONCAT(FLOOR(SUM(TIME_TO_SEC(TIMEDIFF(absences.to_hour, absences.from_hour))) / 3600), 'h',
-                        LPAD(FLOOR((SUM(TIME_TO_SEC(TIMEDIFF(absences.to_hour, absences.from_hour))) % 3600) / 60), 2, '0'), 'min') AS total_time_absent")
-            )
-            ->when($searchQuery, function ($query) use ($terms) {
-                foreach ($terms as $term) {
-                    $query->where(function ($query) use ($term) {
-                        $query->where('students.Nom', 'LIKE', "%{$term}%")
-                            ->orWhere('students.Prenom', 'LIKE', "%{$term}%")
-                            ->orWhere('students.Groupe', 'LIKE', "%{$term}%");
-                    });
-                }
-            })
-            ->groupBy('students.CEF', 'students.Nom', 'students.Prenom', 'students.Groupe')
-            ->get();
-    
-        return view('Check', compact('studentsWithAbsences'));
+        $groups = Student::select('Groupe')->distinct()->orderBy('Groupe')->pluck('Groupe');
+
+        $query = DB::table('students')
+            ->join('absences', 'students.id', '=', 'absences.student_id')
+            ->select('students.CEF', 'students.Nom', 'students.Prenom', 'students.Groupe', 
+                        DB::raw("CONCAT(FLOOR(SUM(TIME_TO_SEC(TIMEDIFF(absences.to_hour, absences.from_hour))) / 3600), 'h ',
+                        LPAD(FLOOR((SUM(TIME_TO_SEC(TIMEDIFF(absences.to_hour, absences.from_hour))) % 3600) / 60), 2, '0'), 'min') AS total_time_absent"));
+
+        if (!empty($searchQuery)) {
+            $terms = explode(' ', $searchQuery);
+            foreach ($terms as $term) {
+                $query->orWhere('students.Nom', 'like', "%{$term}%")
+                        ->orWhere('students.Prenom', 'like', "%{$term}%")
+                        ->orWhere('students.Groupe', 'like', "%{$term}%");
+            }
+        }
+
+        if (!empty($selectedGroup)) {
+            $query->where('students.Groupe', $selectedGroup);
+        }
+
+        $studentsWithAbsences = $query->groupBy('students.CEF', 'students.Nom', 'students.Prenom', 'students.Groupe')->get();
+
+        return view('check', compact('groups', 'studentsWithAbsences', 'selectedGroup'));
     }
+
+
+
+//     public function showAbsences(Request $request)
+// {
+//     $selectedGroup = $request->input('groupe');
+//     $groups = Student::select('Groupe')->distinct()->orderBy('Groupe')->pluck('Groupe');
+
+//     $studentsWithAbsences = collect(); // Initialize as an empty collection
+//     $searchQuery = $request->input('search');
+//     $terms = explode(' ', $searchQuery); // Séparer les termes de recherche
+
+//     $studentsWithAbsencess = DB::table('students')
+//         ->join('absences', 'students.id', '=', 'absences.student_id') // Utilisez join au lieu de leftJoin pour ne sélectionner que les étudiants avec des absences
+//         ->select(
+//             'students.CEF',
+//             'students.Nom',
+//             'students.Prenom',
+//             'students.Groupe',
+//             DB::raw("CONCAT(FLOOR(SUM(TIME_TO_SEC(TIMEDIFF(absences.to_hour, absences.from_hour))) / 3600), 'h ',
+//                     LPAD(FLOOR((SUM(TIME_TO_SEC(TIMEDIFF(absences.to_hour, absences.from_hour))) % 3600) / 60), 2, '0'), 'min') AS total_time_absent")
+//         )
+//         ->when($searchQuery, function ($query) use ($terms) {
+//             foreach ($terms as $term) {
+//                 $query->where(function ($query) use ($term) {
+//                     $query->where('students.Nom', 'LIKE', "%{$term}%")
+//                         ->orWhere('students.Prenom', 'LIKE', "%{$term}%")
+//                         ->orWhere('students.Groupe', 'LIKE', "%{$term}%");
+//                 });
+//             }
+//         })
+//         ->groupBy('students.CEF', 'students.Nom', 'students.Prenom', 'students.Groupe')
+//         ->get();
+
+
+//     if ($selectedGroup) {
+//         $studentsWithAbsences = DB::table('students')
+//             ->join('absences', 'students.id', '=', 'absences.student_id')
+//             ->where('students.Groupe', $selectedGroup)
+//             ->select('students.CEF', 'students.Nom', 'students.Prenom', 'students.Groupe', 
+//                         DB::raw("CONCAT(FLOOR(SUM(TIME_TO_SEC(TIMEDIFF(absences.to_hour, absences.from_hour))) / 3600), 'h ',
+//                         LPAD(FLOOR((SUM(TIME_TO_SEC(TIMEDIFF(absences.to_hour, absences.from_hour))) % 3600) / 60), 2, '0'), 'min') AS total_time_absent"))
+//             ->groupBy('students.CEF', 'students.Nom', 'students.Prenom', 'students.Groupe')
+//             ->get();
+//     }
+
+//     return view('check', compact('groups', 'studentsWithAbsences', 'selectedGroup','studentsWithAbsencess'));
+// }
+
+
     
     public function delete($id)
     {
