@@ -100,3 +100,8 @@ Route::post('/upload', function() {
 
 
 Route::get('/search',[StudentController::class,"search"]);
+
+//about
+Route::get('/about', function () {
+    return view('About');
+});

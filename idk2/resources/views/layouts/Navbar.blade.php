@@ -89,14 +89,15 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('absences.show') }}">Consulter les Absences <i class="bi bi-eye-fill"></i></a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/upload">Importer CSV <i class="bi bi-upload"></i></a>
-                    </li>
+                    
                     <li class="nav-item">
                         <a class="nav-link" href="/Imprimer">Impression <i class="bi bi-printer-fill"></i></a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/graph">Graphiques <i class="bi bi-graph-up"></i></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/upload">Importer CSV <i class="bi bi-upload"></i></a>
                     </li>
                     <div>
                         <ul class="navbar-nav mx-auto rounded d-flex">
